@@ -24,7 +24,7 @@ const Navbar = () => {
             </p>
             <div className="flex items-center gap-5">
                 <Link href="/signin">
-                    <Button variant="outline" className="text-white border-white bg-transparent hover:bg-white hover:text-primary-700 rounded-lg">
+                    <Button variant="secondary" className="text-white border-white bg-transparent hover:bg-white hover:text-primary-700 rounded-lg">
                         Sign In
                     </Button>
                 </Link>
