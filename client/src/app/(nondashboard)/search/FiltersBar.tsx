@@ -1,4 +1,4 @@
-import { setFilters, setViewMode, toggleFiltersFullOpen } from '@/state';
+import { FiltersState, setFilters, setViewMode, toggleFiltersFullOpen } from '@/state';
 import { useAppSelector } from '@/state/redux';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react'
@@ -20,7 +20,7 @@ const FiltersBar = () => {
     const viewMode = useAppSelector((state) => state.global.viewMode);
     const [searchInput, setSearchInput] = useState(filters.location);
 
-    const updateURL = debounce((newFilters) => {
+    const updateURL = debounce((newFilters: FiltersState) => {
         const cleanFilters = cleanParams(newFilters);
         const updatedSearchParams = new URLSearchParams();
 
