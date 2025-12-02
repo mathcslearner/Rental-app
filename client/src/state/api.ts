@@ -111,6 +111,16 @@ export const api = createApi({
         }),
 
         //Tenant related endpoints
+        getTenant: build.query<Tenant, string>({
+            query: (cognitoId) => `tenants/${cognitoId}`,
+            providesTags: (result) => [{ type: "Tenants", id: result?.id }],
+            async onQueryStarted(_, { queryFulfilled }) {
+                await withToast(queryFulfilled, {
+                    error: "Failed to load tenant profile.",
+                });
+            },
+        }),
+
         addFavoriteProperty: build.mutation<Tenant, {cognitoId: string; propertyId: number}>({
             query: ({cognitoId, propertyId}) => ({
                 url: `tenants/${cognitoId}/favorites/${propertyId}`,
@@ -129,4 +139,4 @@ export const api = createApi({
     })
 })
 
-export const {useGetAuthUserQuery, useUpdateTenantSettingsMutation, useUpdateManagerSettingsMutation, useGetPropertiesQuery, useAddFavoritePropertyMutation, useRemoveFavoritePropertyMutation} = api;
+export const {useGetAuthUserQuery, useUpdateTenantSettingsMutation, useUpdateManagerSettingsMutation, useGetPropertiesQuery, useGetTenantQuery, useAddFavoritePropertyMutation, useRemoveFavoritePropertyMutation} = api;
