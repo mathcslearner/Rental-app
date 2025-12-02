@@ -108,8 +108,25 @@ export const api = createApi({
                   error: "Failed to fetch properties.",
                 });
               }
+        }),
+
+        //Tenant related endpoints
+        addFavoriteProperty: build.mutation<Tenant, {cognitoId: string; propertyId: number}>({
+            query: ({cognitoId, propertyId}) => ({
+                url: `tenants/${cognitoId}/favorites/${propertyId}`,
+                method: "POST"
+            }),
+            invalidatesTags: (result) => [{type: "Tenants", id: result?.id}, {type: "Properties", id: "LIST"}]
+        }),
+
+        removeFavoriteProperty: build.mutation<Tenant, {cognitoId: string; propertyId: number}>({
+            query: ({cognitoId, propertyId}) => ({
+                url: `tenants/${cognitoId}/favorites/${propertyId}`,
+                method: "DELETE"
+            }),
+            invalidatesTags: (result) => [{type: "Tenants", id: result?.id}, {type: "Properties", id: "LIST"}]
         })
     })
 })
 
-export const {useGetAuthUserQuery, useUpdateTenantSettingsMutation, useUpdateManagerSettingsMutation, useGetPropertiesQuery} = api;
+export const {useGetAuthUserQuery, useUpdateTenantSettingsMutation, useUpdateManagerSettingsMutation, useGetPropertiesQuery, useAddFavoritePropertyMutation, useRemoveFavoritePropertyMutation} = api;
