@@ -158,9 +158,26 @@ export const api = createApi({
             invalidatesTags: (result) => [{type: "Tenants", id: result?.id}, {type: "Properties", id: "LIST"}]
         }),
 
+        //manager related endpoints
+        getManagerProperties: build.query<Property[], string>({
+            query: (cognitoId) =>  `managers/${cognitoId}/properties`,
+            providesTags: (result) => 
+                result
+                ? [
+                    ...result.map(({id}) => ({type: "Properties" as const, id})), {type: "Properties", id: "LIST"}
+                ]
+                : [{type: "Properties", id: "LIST"}]
+
+        }),
+
         //lease related endpoints
         getLeases: build.query<Lease[], number>({
             query: () => "leases",
+            providesTags: ["Leases"]
+        }),
+
+        getPropertyLeases: build.query<Lease[], number>({
+            query: (propertyId) => `properties/${propertyId}/leases`,
             providesTags: ["Leases"]
         }),
 
@@ -171,4 +188,4 @@ export const api = createApi({
     })
 })
 
-export const {useGetAuthUserQuery, useUpdateTenantSettingsMutation, useUpdateManagerSettingsMutation, useGetPropertiesQuery, useGetPropertyQuery, useGetTenantQuery, useAddFavoritePropertyMutation, useRemoveFavoritePropertyMutation, useGetCurrentResidencesQuery, useGetLeasesQuery, useGetPaymentsQuery} = api;
+export const {useGetAuthUserQuery, useUpdateTenantSettingsMutation, useUpdateManagerSettingsMutation, useGetPropertiesQuery, useGetPropertyQuery, useGetTenantQuery, useAddFavoritePropertyMutation, useRemoveFavoritePropertyMutation, useGetCurrentResidencesQuery, useGetLeasesQuery, useGetPaymentsQuery, useGetManagerPropertiesQuery, useGetPropertyLeasesQuery} = api;
