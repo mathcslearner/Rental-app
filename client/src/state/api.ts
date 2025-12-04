@@ -220,7 +220,16 @@ export const api = createApi({
             }),
             invalidatesTags: ["Applications", "Leases"]
         }),
+
+        createApplication: build.mutation<Application, Partial<Application>>({
+            query: (body) => ({
+                url: `applications`,
+                method: "POST",
+                body: body
+            }),
+            invalidatesTags: ["Applications"]
+        }),
     })
 })
 
-export const {useGetAuthUserQuery, useUpdateTenantSettingsMutation, useUpdateManagerSettingsMutation, useGetPropertiesQuery, useGetPropertyQuery, useGetTenantQuery, useAddFavoritePropertyMutation, useRemoveFavoritePropertyMutation, useGetCurrentResidencesQuery, useGetLeasesQuery, useGetPaymentsQuery, useGetManagerPropertiesQuery, useGetPropertyLeasesQuery, useCreatePropertyMutation, useGetApplicationsQuery, useUpdateApplicationStatusMutation} = api;
+export const {useGetAuthUserQuery, useUpdateTenantSettingsMutation, useUpdateManagerSettingsMutation, useGetPropertiesQuery, useGetPropertyQuery, useGetTenantQuery, useAddFavoritePropertyMutation, useRemoveFavoritePropertyMutation, useGetCurrentResidencesQuery, useGetLeasesQuery, useGetPaymentsQuery, useGetManagerPropertiesQuery, useGetPropertyLeasesQuery, useCreatePropertyMutation, useGetApplicationsQuery, useUpdateApplicationStatusMutation, useCreateApplicationMutation} = api;
