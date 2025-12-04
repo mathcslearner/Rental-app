@@ -63,7 +63,13 @@ export const api = createApi({
                 method: "PUT",
                 body: updatedTenant
             }),
-            invalidatesTags: (result) => [{type: "Tenants", id: result?.id}]
+            invalidatesTags: (result) => [{type: "Tenants", id: result?.id}],
+            async onQueryStarted(_, { queryFulfilled }) {
+                await withToast(queryFulfilled, {
+                    success: "Settings updated successfully",
+                    error: "Failed update settings.",
+                });
+            },
         }),
 
         updateManagerSettings: build.mutation<Manager, {cognitoId: string} & Partial<Manager>>({
@@ -72,7 +78,13 @@ export const api = createApi({
                 method: "PUT",
                 body: updatedManager
             }),
-            invalidatesTags: (result) => [{type: "Managers", id: result?.id}]
+            invalidatesTags: (result) => [{type: "Managers", id: result?.id}],
+            async onQueryStarted(_, { queryFulfilled }) {
+                await withToast(queryFulfilled, {
+                    success: "Settings updated successfully",
+                    error: "Failed to update settings.",
+                });
+            },
         }),
 
         //Property related endpoints
@@ -138,7 +150,12 @@ export const api = createApi({
                 ? [
                     ...result.map(({id}) => ({type: "Properties" as const, id})), {type: "Properties", id: "LIST"}
                 ]
-                : [{type: "Properties", id: "LIST"}]
+                : [{type: "Properties", id: "LIST"}],
+            async onQueryStarted(_, { queryFulfilled }) {
+                await withToast(queryFulfilled, {
+                    error: "Failed to fetch property details.",
+                });
+            },
 
         }),
 
@@ -147,7 +164,13 @@ export const api = createApi({
                 url: `tenants/${cognitoId}/favorites/${propertyId}`,
                 method: "POST"
             }),
-            invalidatesTags: (result) => [{type: "Tenants", id: result?.id}, {type: "Properties", id: "LIST"}]
+            invalidatesTags: (result) => [{type: "Tenants", id: result?.id}, {type: "Properties", id: "LIST"}],
+            async onQueryStarted(_, { queryFulfilled }) {
+                await withToast(queryFulfilled, {
+                    success: "Added to favorites",
+                    error: "Failed to add to favorites",
+                });
+            },
         }),
 
         removeFavoriteProperty: build.mutation<Tenant, {cognitoId: string; propertyId: number}>({
@@ -155,7 +178,13 @@ export const api = createApi({
                 url: `tenants/${cognitoId}/favorites/${propertyId}`,
                 method: "DELETE"
             }),
-            invalidatesTags: (result) => [{type: "Tenants", id: result?.id}, {type: "Properties", id: "LIST"}]
+            invalidatesTags: (result) => [{type: "Tenants", id: result?.id}, {type: "Properties", id: "LIST"}],
+            async onQueryStarted(_, { queryFulfilled }) {
+                await withToast(queryFulfilled, {
+                    success: "Removed from properties",
+                    error: "Failed to remove from favorites.",
+                });
+            },
         }),
 
         //manager related endpoints
@@ -166,7 +195,12 @@ export const api = createApi({
                 ? [
                     ...result.map(({id}) => ({type: "Properties" as const, id})), {type: "Properties", id: "LIST"}
                 ]
-                : [{type: "Properties", id: "LIST"}]
+                : [{type: "Properties", id: "LIST"}],
+            async onQueryStarted(_, { queryFulfilled }) {
+                await withToast(queryFulfilled, {
+                    error: "Failed to load manager profile.",
+                });
+            },
 
         }),
 
@@ -176,23 +210,44 @@ export const api = createApi({
                 method: "POST",
                 body: newProperty
             }),
-            invalidatesTags: (result) => [{type: "Managers", id: result?.manager?.id}, {type: "Properties", id: "LIST"}]
+            invalidatesTags: (result) => [{type: "Managers", id: result?.manager?.id}, {type: "Properties", id: "LIST"}],
+            async onQueryStarted(_, { queryFulfilled }) {
+                await withToast(queryFulfilled, {
+                    success: "Property created successfully",
+                    error: "Failed to create property.",
+                });
+            },
         }),
 
         //lease related endpoints
         getLeases: build.query<Lease[], number>({
             query: () => "leases",
-            providesTags: ["Leases"]
+            providesTags: ["Leases"],
+            async onQueryStarted(_, { queryFulfilled }) {
+                await withToast(queryFulfilled, {
+                    error: "Failed to fetch leases.",
+                });
+            },
         }),
 
         getPropertyLeases: build.query<Lease[], number>({
             query: (propertyId) => `properties/${propertyId}/leases`,
-            providesTags: ["Leases"]
+            providesTags: ["Leases"],
+            async onQueryStarted(_, { queryFulfilled }) {
+                await withToast(queryFulfilled, {
+                    error: "Failed to fetch property leases.",
+                });
+            },
         }),
 
         getPayments: build.query<Payment[], number>({
             query: (leaseId) => `leases/${leaseId}/payments`,
-            providesTags: ["Payments"]
+            providesTags: ["Payments"],
+            async onQueryStarted(_, { queryFulfilled }) {
+                await withToast(queryFulfilled, {
+                    error: "Failed to fetch payment info.",
+                });
+            },
         }),
 
         //application related endpoints
@@ -209,7 +264,12 @@ export const api = createApi({
 
                 return `applications?${queryParams.toString()}`
             },
-            providesTags: ["Applications"]
+            providesTags: ["Applications"],
+            async onQueryStarted(_, { queryFulfilled }) {
+                await withToast(queryFulfilled, {
+                    error: "Failed to fetch applications.",
+                });
+            },
         }),
 
         updateApplicationStatus: build.mutation<Application & {lease?: Lease}, {id: number; status: string}>({
@@ -218,7 +278,13 @@ export const api = createApi({
                 method: "PUT",
                 body: {status}
             }),
-            invalidatesTags: ["Applications", "Leases"]
+            invalidatesTags: ["Applications", "Leases"],
+            async onQueryStarted(_, { queryFulfilled }) {
+                await withToast(queryFulfilled, {
+                    success: "Application status updated successfully",
+                    error: "Failed to update application settings.",
+                });
+            },
         }),
 
         createApplication: build.mutation<Application, Partial<Application>>({
@@ -227,7 +293,13 @@ export const api = createApi({
                 method: "POST",
                 body: body
             }),
-            invalidatesTags: ["Applications"]
+            invalidatesTags: ["Applications"],
+            async onQueryStarted(_, { queryFulfilled }) {
+                await withToast(queryFulfilled, {
+                    success: "Application updated successfully",
+                    error: "Failed to create application.",
+                });
+            },
         }),
     })
 })
